@@ -3,6 +3,7 @@ import './App.css';
 import axios from 'axios'
 import User from './User'
 import Repos from './Repos'
+import Notes from './Notes'
 
 class App extends Component {
   constructor(props) {
@@ -18,11 +19,11 @@ class App extends Component {
   }
    getRepos = (username) =>{
   return axios.get(`https://api.github.com/users/${username}/repos`);
-}
+  }
 
   getUserInfo = (username) => {
   return axios.get(`https://api.github.com/users/${username}`);
-}
+  }
 
   onSubmit = (e) => {
     e.preventDefault()
@@ -31,7 +32,8 @@ class App extends Component {
       .then(response => {
         this.setState({
           items: [...this.state.items, response[1].data],
-          repos: [...this.state.repos, ...response[0].data]
+          repos: [...this.state.repos, ...response[0].data],
+          value: ''
         })
       })
       .catch(err => console.log(err))
@@ -50,7 +52,10 @@ class App extends Component {
           <User userdata={this.state.items}/>
         </div>
         <div className="col-md-4">
-          <Repos username={this.state.value} repos={this.state.repos}/>
+          <Repos repos={this.state.repos}/>
+        </div>
+        <div className="col-md-4">
+          <Notes />
         </div>
       </div>
       </div>

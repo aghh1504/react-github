@@ -6,7 +6,7 @@ const User = ({userdata}) => {
         {
           userdata.map(userdata => {
             return (
-              <div>
+              <div key={userdata.login}>
                 {userdata.avatar_url && <li className="list-group-item"> <img src={userdata.avatar_url} className="img-rounded img-responsive"/></li>}
                 {userdata.name && <li className="list-group-item">Name: {userdata.name}</li>}
                 {userdata.login && <li className="list-group-item">Username: {userdata.login}</li>}
