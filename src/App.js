@@ -11,9 +11,22 @@ class App extends Component {
     this.state = {
       value: '',
       items: [],
-      repos: []
+      repos: [],
+      notes: this.props.notes
     }
   }
+
+  componentDidMount() {
+    axios
+      .get("/users")
+      .then(response => {
+        this.setState({
+          items: [...response.data]
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   onChange = (e) => {
     this.setState({value: e.target.value})
   }
@@ -24,11 +37,18 @@ class App extends Component {
   getUserInfo = (username) => {
   return axios.get(`https://api.github.com/users/${username}`);
   }
+  getUser = () => {
+    const newUser = {
+      Username: this.state.items,
+      repos: this.state.repos
+    };
+   return axios.post(`/new`, newUser);
+ }
 
   onSubmit = (e) => {
     e.preventDefault()
   return  axios
-      .all([this.getRepos(this.state.value), this.getUserInfo(this.state.value)])
+      .all([this.getRepos(this.state.value), this.getUserInfo(this.state.value), this.getUser()])
       .then(response => {
         this.setState({
           items: [...this.state.items, response[1].data],
