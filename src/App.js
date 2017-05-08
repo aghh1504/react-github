@@ -12,13 +12,14 @@ class App extends Component {
       value: '',
       items: [],
       repos: [],
-      notes: this.props.notes
+      notes: this.props.notes,
+      users: []
     }
   }
 
   componentDidMount() {
     axios
-      .get("/users")
+      .get("http://localhost:8080/users")
       .then(response => {
         this.setState({
           items: [...response.data]
@@ -31,30 +32,30 @@ class App extends Component {
     this.setState({value: e.target.value})
   }
    getRepos = (username) =>{
-  return axios.get(`https://api.github.com/users/${username}/repos`);
+  return axios.get(`/users/${username}`);
   }
 
   getUserInfo = (username) => {
-  return axios.get(`https://api.github.com/users/${username}`);
+  return axios.get(`/users/${username}`);
   }
-  getUser = () => {
-    const newUser = {
-      Username: this.state.items,
-      repos: this.state.repos
-    };
-   return axios.post(`/new`, newUser);
+  setUser = (repos, items) => {
+    const userData = {
+      repos,
+      items
+    }
+   return axios.post(`/new`, userData);
  }
 
   onSubmit = (e) => {
     e.preventDefault()
-  return  axios
-      .all([this.getRepos(this.state.value), this.getUserInfo(this.state.value), this.getUser()])
+  return this.getUserInfo(this.state.value)
       .then(response => {
+        console.log(response)
         this.setState({
-          items: [...this.state.items, response[1].data],
-          repos: [...this.state.repos, ...response[0].data],
+          users: [...this.state.users, response.data],
           value: ''
         })
+
       })
       .catch(err => console.log(err))
   }
@@ -67,13 +68,26 @@ class App extends Component {
         <input value={this.state.value} onChange={this.onChange}/>
         <button>Search</button>
         </form>
-        <div className="row">
-        <div className="col-md-4">
-          <User userdata={this.state.items}/>
-        </div>
-        <div className="col-md-4">
-          <Repos repos={this.state.repos}/>
-        </div>
+        <ul className="nav nav-tabs" role="tablist">
+
+          {
+            this.state.users.map((user,i) => {
+            return (
+              <li className="nav-item">
+                <a className="nav-link" data-toggle="tab" href={'#' + user.info.login} role="tab">{user.info.login}</a>
+              </li>
+            )
+          })
+        }
+        </ul>
+        <div className="tab-content">
+          {
+            this.state.users.map((user,i) => {
+            return (
+              <User user={user} key={i} />
+            )
+          })
+        }
         <div className="col-md-4">
           <Notes />
         </div>

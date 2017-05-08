@@ -2,6 +2,7 @@
   "name": "react-github",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "axios": "^0.16.1",
     "body-parser": "^1.17.1",
