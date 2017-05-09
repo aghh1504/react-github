@@ -1,34 +1,73 @@
 import React, {Component} from 'react'
+import axios from 'axios'
 
 export default class Notes extends Component{
-  constructor(props) {
-    super(props)
+  constructor({username}) {
+    super()
     this.state = {
+      username,
       value: '',
-      items: []
+      notes: []
     }
   }
 
-  onSubmit = (e) => {
-    e.preventDefault()
-    this.setState({value:'', items: [...this.state.items, this.state.value]})
+  componentWillMount() {
+    this.getNotes();
+  }
+
+  addNote = (e) => {
+    e.preventDefault();
+    const url = `/notes/${this.state.username}`;
+
+    axios.post(url, {
+      text: this.state.value
+    })
+      .then(() => this.getNotes())
+      .catch(err => console.log(err))
+
+    this.setState({value: ''});
   }
 
   onChange = (e) => {
     this.setState({value: e.target.value})
   }
 
+  removeNote = (event, index) => {
+    event.preventDefault();
+    const url = `/notes/${this.state.username}/${index}`;
+
+    axios.delete(url)
+      .then(() => this.getNotes())
+      .catch(err => console.log(err))
+  }
+
+  getNotes = () => {
+    const url = `/notes/${this.state.username}`;
+
+    axios.get(url)
+      .then(({data}) => {
+        this.setState({
+          notes: data.notes
+        })
+      })
+      .catch(err => console.log(err))
+  }
+
   render() {
     return (
       <div>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.addNote}>
           <input value={this.state.value} onChange={this.onChange}/>
           <button>Add Note</button>
         </form>
         <ul className='list-group'>
           {
-            this.state.items.map((item, i) => <li className='list-group-item' key={i}>{item}</li> )
+            this.state.notes.map((note, i) => <li className='list-group-item' key={i}>
+              {note}
+              <a href="#" onClick={(e) => this.removeNote(e, i)}> X </a>
+            </li> )
           }
+
         </ul>
       </div>
     )

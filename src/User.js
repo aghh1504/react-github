@@ -5,71 +5,51 @@ import Notes from './Notes'
 import axios from 'axios'
 
 class User extends Component {
-  constructor(props) {
-    super(props)
+  constructor({user}) {
+    super()
     this.state = {
-      value: '',
-      users: []
+      username: user,
+      ready: false,
+      info: {},
+      repos: [],
+      notes: []
     }
   }
 
-  onChange = (e) => {
-    this.setState({value: e.target.value})
+  componentWillMount() {
+    this.getData({forceUpdate: false});
   }
 
-  getUserInfo = (username) => {
-  return axios.get(`/users/${username}`);
-  }
+  getData = ({forceUpdate = false} = {}) => {
+    this.setState({
+      ready: false
+    });
+    const url = `/users/${this.state.username}${forceUpdate ? '?force=true' : ''}`;
 
-  onSubmit = (e) => {
-    e.preventDefault()
-  return this.getUserInfo(this.state.value)
-      .then(response => {
-        console.log(response)
+    axios.get(url)
+      .then(({data}) => {
         this.setState({
-          users: [...this.state.users, response.data],
-          value: ''
+          ready: true,
+          info: data.info || {},
+          repos: data.repos || [],
+          notes: data.notes || []
         })
-
       })
       .catch(err => console.log(err))
   }
 
   render() {
-    return (
-      <div className="App">
-        <form onSubmit={this.onSubmit}>
-        <input value={this.state.value} onChange={this.onChange}/>
-        <button>Search</button>
-        </form>
-        <ul className="nav nav-tabs" role="tablist">
-          {
-            this.state.users.map((user,i) => {
-            return (
-              <li className="nav-item">
-                <a className="nav-link" data-toggle="tab" href={'#' + user.info.login} role="tab">{user.info.login}</a>
-              </li>
-              )
-            })
-          }
-        </ul>
-        <div className="tab-content">
-          {
-            this.state.users.map((user,i) => {
-            return  (
-              <div className="user tab-pane" id={user.info.login} role="tabpanel">
-                <Profile userdata={user.info} key={i} />
-                <Repos repos={user.repos}/>
-              </div>
-            )
-            })
-          }
-        </div>
-        <div className="col-md-4">
-          <Notes />
-        </div>
-      </div>
-    );
+    if(this.state.ready) {
+      return (<div>
+        <a href='#' onClick={() => this.getData({forceUpdate: true})}> Refresh </a>
+        <Profile userdata={this.state.info} />
+        <Repos repos={this.state.repos} />
+        <Notes username={this.state.username} />
+      </div>);
+    } else {
+      return <div> Loading... </div>;
+    }
+
   }
 }
 
