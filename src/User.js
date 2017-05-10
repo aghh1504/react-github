@@ -39,18 +39,40 @@ class User extends Component {
   }
 
   render() {
-    if(this.state.ready) {
-      return (<div>
-        <a href='#' onClick={() => this.getData({forceUpdate: true})}> Refresh </a>
-        <Profile userdata={this.state.info} />
-        <Repos repos={this.state.repos} />
-        <Notes username={this.state.username} />
-      </div>);
+    if(this.state.ready ) {
+      return (
+        <div className="tab-content">
+          <a href='#' onClick={() => this.getData({forceUpdate: true})}> Refresh </a>
+          <div className="user tab-panel" id={this.state.username} role="tabpanel">
+            <Profile userdata={this.state.info} />
+            <Repos repos={this.state.repos} />
+            <Notes username={this.state.username} />
+          </div>
+        </div>
+      );
     } else {
       return <div> Loading... </div>;
     }
 
   }
 }
+
+
+
+
+
+      //  if(this.state.ready) {
+      //    return (
+      //      <div>
+      //        <a href='#' onClick={() => this.getData({forceUpdate: true})}> Refresh </a>
+      //        <Profile userdata={this.state.info} />
+      //        <Repos repos={this.state.repos} />
+      //        <Notes username={this.state.username} />
+      //      </div>
+      //    );
+      //  } else {
+      //    return <div> Loading... </div>;
+      //  }
+
 
 export default User;

@@ -4,7 +4,6 @@ const bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var fetch = require("node-fetch");
 
-const GITHUB_TOKEN = '3d77aaa0aee4a5b2bdfe6b800c7bdaf2ca2c42fc';
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost/githubusers");
 var db = mongoose.connection;
@@ -24,8 +23,6 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-
 
 
 app.use(bodyParser.urlencoded({ extended: true }));

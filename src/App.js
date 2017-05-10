@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios'
 import User from './User'
-import Repos from './Repos'
-import Notes from './Notes'
 import Search from './Search'
 
 class App extends Component {
@@ -35,16 +32,23 @@ class App extends Component {
   //     })
   //   }
   // </ul>
+  //   <User user={user} key={i}/>
 //return  <User user={user} key={i} />
+//className="tab-content2"
   render() {
     return (
       <div className="App">
         <Search onSearch={this.addUser} />
 
-        <div className="tab-content2">
+        <div className="nav nav-tabs" role="tablist">
           {
             this.state.users.map((user,i) => {
-              return <User user={user} key={i} />
+              return (
+                <li className="nav-item">
+                  <a className="nav-link" data-toggle="tab" href={'#' + user} role="tab" >{user}</a>
+                   <User user={user} key={i}/>
+                </li>
+              )
             })
           }
         </div>

@@ -1,8 +1,5 @@
 import React, { Component }  from 'react'
-import Profile from './Profile'
-import Repos from './Repos'
-import Notes from './Notes'
-import axios from 'axios'
+
 
 class Search extends Component {
   constructor({onSearch = () => {}}) {
